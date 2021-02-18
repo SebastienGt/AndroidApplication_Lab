@@ -71,8 +71,6 @@ public class MainActivity2 extends AppCompatActivity {
 
 
                     try {
-                        JSONObject jsonObject = new JSONObject("{\"phonetype\":\"N95\",\"cat\":\"WP\"}");
-                        System.out.println(jsonObject.getString("phonetype"));
                         int debut = s.indexOf("(");
                         int fin = s.lastIndexOf(")");
                         String newJsonFormat = s.substring(debut + 1, fin);

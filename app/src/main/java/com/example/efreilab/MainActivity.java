@@ -33,7 +33,9 @@ public class MainActivity extends AppCompatActivity {
     private EditText editName;
     private EditText editPass;
     private Button buttonConfirm;
+    private Button buttonListView;
     private TextView result;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,11 +46,13 @@ public class MainActivity extends AppCompatActivity {
         editPass = findViewById(R.id.editPass);
         buttonConfirm = findViewById(R.id.button);
         result = findViewById(R.id.result);
+        buttonListView = findViewById(R.id.button_List);
 
         editName.addTextChangedListener(loginTextWatcher);
         editPass.addTextChangedListener(loginTextWatcher);
 
         Intent intent = new Intent(this, MainActivity2.class);
+        Intent intentListView = new Intent(this, ListActivity.class);
 
 
         buttonConfirm.setOnClickListener(new View.OnClickListener() {
@@ -58,6 +62,12 @@ public class MainActivity extends AppCompatActivity {
                 thread.start();
 
                 startActivity(intent);
+            }
+        });
+        buttonListView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(intentListView);
             }
         });
     }
