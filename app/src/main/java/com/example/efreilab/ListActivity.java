@@ -6,9 +6,11 @@ import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -27,6 +29,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Calendar;
 import java.util.Vector;
+import java.util.zip.Inflater;
+
 import javax.net.ssl.HttpsURLConnection;
 
 
@@ -43,13 +47,11 @@ public class ListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_list);
         myAdapter = new MyAdapter();
 
+
         listView = findViewById(R.id.list);
+        listView.setAdapter(myAdapter);
         AsyncFlickrJSONDataForList dataForList = new AsyncFlickrJSONDataForList(myAdapter);
         dataForList.execute("https://www.flickr.com/services/feeds/photos_public.gne?tags=trees&format=json");
-
-        RequestQueue queue = MySingleton.getInstance(listView.getContext()).
-                getRequestQueue();
-
     }
 
 
@@ -65,12 +67,12 @@ public class ListActivity extends AppCompatActivity {
 
         @Override
         public int getCount() {
-            return 0;
+            return vector.size();
         }
 
         @Override
         public Object getItem(int position) {
-            return null;
+            return vector.get(position);
         }
 
         @Override
@@ -80,28 +82,35 @@ public class ListActivity extends AppCompatActivity {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            Log.i("JFL", "TODO");
-            textView = findViewById(R.id.textView4);
-            textView.setText(vector.get(position));
 
-            Response.Listener<Bitmap> rep_listener = response -> {
-// TODO
+            RequestQueue queue = MySingleton.getInstance(listView.getContext()).
+                    getRequestQueue();
+
+
+            Log.i("JFL", "TODO");
+
+
+            if( convertView == null ){
+                //We must create a View:
+                convertView = LayoutInflater.from(listView.getContext())
+                        .inflate(R.layout.bitmaplayout, listView, false);
+            }
+
+            String imageURL = (String)getItem(position);
+
+            ImageView Image = convertView.findViewById(R.id.imageView4);
+
+            Response.Listener<Bitmap> rep_listener = bmp -> {
+                Image.setImageBitmap(bmp);
 
             };
 
-            //ImageRequest imageRequest;
-            //imageRequest = new ImageRequest(vector.get(position), rep_listener);
+            ImageRequest request = new ImageRequest(
+                    imageURL, rep_listener, 300,
+                    300, ImageView.ScaleType.CENTER, Bitmap.Config.RGB_565, null);
 
-
-            return null;
-            /*
-            if( convertView == null ){
-                //We must create a View:
-                Inflater inflater = null;
-                convertView = inflater.inflate(R.layout.activity_list, parent, false);
-            }*/
-
-
+            queue.add(request);
+            return convertView;
         }
     }
 
@@ -176,7 +185,9 @@ public class ListActivity extends AppCompatActivity {
                     adapt.dd(linkOfPicture);
 
                 }
+                System.out.println("dddataata avant");
                 adapt.notifyDataSetChanged();
+                System.out.println("dddataata apres");
                 //linkOfPicture = jsonObject.getJSONArray("items").getJSONObject(1).getString("media");
 
             } catch (JSONException e) {
